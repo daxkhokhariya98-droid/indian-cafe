@@ -58,6 +58,8 @@ Build order follows the GDD's "Core Unity Systems & Scripts" section:
 | 3 | Order & Cooking Logic | 🔧 In progress |
 | 4 | Economy & Restock | ⬜ Not started |
 | 5 | Save / Load | ⬜ Not started |
+| 6 | Basic Prototype PC system | ✅
+| 7 | Main Menu | ✅
 
 ---
 
