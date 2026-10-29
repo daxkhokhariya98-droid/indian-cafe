@@ -1,12 +1,9 @@
 using UnityEngine;
+using System.Collections;
 using TMPro;
 
 public class ShopManager : MonoBehaviour
 {
-    [Header("Player Economy")]
-    public int playerMoney = 1000; // Starting money
-    public TextMeshProUGUI moneyText;
-
     [Header("Item Prices")]
     public int matchaPrice = 45;
     public int milkPrice = 35;
@@ -17,78 +14,65 @@ public class ShopManager : MonoBehaviour
     public GameObject milkPrefab;
     public GameObject sweetenerPrefab;
 
-    [Header("Delivery Point")]
-    public Transform deliverySpawnPoint; // Shop ke baahar jahan delivery box/item drop hoga
-
-    private void Start()
-    {
-        UpdateMoneyUI();
-    }
+    [Header("Delivery Settings")]
+    public Transform deliverySpawnPoint; // Shop ke baahar jahan delivery item drop hoga
+    public float deliveryDelay = 30f;    // 30 seconds delay delivery ke liye
 
     public void BuyMatchaPowder()
     {
-        if (playerMoney >= matchaPrice)
+        // EconomyManager ke through balance check aur deduct hoga
+        if (EconomyManager.Instance != null && EconomyManager.Instance.SpendMoney(matchaPrice))
         {
-            playerMoney -= matchaPrice;
-            UpdateMoneyUI();
-            SpawnItem(matchaPrefab);
-            Debug.Log("Matcha Powder ordered and delivered!");
+            StartCoroutine(SpawnDeliveryItemWithDelay(matchaPrefab));
+            Debug.Log("Matcha Powder ordered! Will arrive in 30 seconds.");
         }
         else
         {
-            Debug.Log("Not enough money!");
+            Debug.Log("Not enough money or EconomyManager missing!");
         }
     }
 
     public void BuyMilk()
     {
-        if (playerMoney >= milkPrice)
+        if (EconomyManager.Instance != null && EconomyManager.Instance.SpendMoney(milkPrice))
         {
-            playerMoney -= milkPrice;
-            UpdateMoneyUI();
-            SpawnItem(milkPrefab);
-            Debug.Log("Milk ordered and delivered!");
+            StartCoroutine(SpawnDeliveryItemWithDelay(milkPrefab));
+            Debug.Log("Milk ordered! Will arrive in 30 seconds.");
         }
         else
         {
-            Debug.Log("Not enough money!");
+            Debug.Log("Not enough money or EconomyManager missing!");
         }
     }
 
     public void BuySweetener()
     {
-        if (playerMoney >= sweetenerPrice)
+        if (EconomyManager.Instance != null && EconomyManager.Instance.SpendMoney(sweetenerPrice))
         {
-            playerMoney -= sweetenerPrice;
-            UpdateMoneyUI();
-            SpawnItem(sweetenerPrefab);
-            Debug.Log("Sweetener ordered and delivered!");
+            StartCoroutine(SpawnDeliveryItemWithDelay(sweetenerPrefab));
+            Debug.Log("Sweetener ordered! Will arrive in 30 seconds.");
         }
         else
         {
-            Debug.Log("Not enough money!");
+            Debug.Log("Not enough money or EconomyManager missing!");
         }
     }
 
-    private void SpawnItem(GameObject itemPrefab)
+    private IEnumerator SpawnDeliveryItemWithDelay(GameObject itemPrefab)
     {
+        // 30 seconds ka wait karega
+        yield return new WaitForSeconds(deliveryDelay);
+
         if (itemPrefab != null && deliverySpawnPoint != null)
         {
-            // Thoda sa random offset taaki saare item ek ke upar ek spawn na ho
+            // Thoda sa random offset taaki items ek ke upar ek spawn na ho
             Vector3 spawnPosition = deliverySpawnPoint.position + new Vector3(Random.Range(-0.2f, 0.2f), 0.5f, Random.Range(-0.2f, 0.2f));
             Instantiate(itemPrefab, spawnPosition, deliverySpawnPoint.rotation);
+            Debug.Log("Item Delivered at Shop Entrance!");
         }
         else
         {
             Debug.LogWarning("Prefab ya Delivery Spawn Point missing hai Inspector mein!");
-        }
-    }
-
-    private void UpdateMoneyUI()
-    {
-        if (moneyText != null)
-        {
-            moneyText.text = "₹ " + playerMoney;
         }
     }
 }

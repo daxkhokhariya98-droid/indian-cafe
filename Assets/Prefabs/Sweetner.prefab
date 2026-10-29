@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 642872177681405443}
   - component: {fileID: 3995591308633070080}
   - component: {fileID: 34374277168045838}
+  - component: {fileID: 1281671209927746748}
   - component: {fileID: 4329614524805622332}
+  - component: {fileID: 5799046496621298975}
   m_Layer: 7
   m_Name: Sweetner
   m_TagString: Untagged
@@ -30,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 4294504659501992515}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.02637194, z: -0, w: 0.9996522}
-  m_LocalPosition: {x: -0.9097699, y: 0.32, z: -8.255867}
+  m_LocalPosition: {x: -7.2891603, y: 0.29992992, z: -3.0676498}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -135,6 +137,27 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.96242344, y: 0.2999649, z: 1.0276277}
+  m_Center: {x: -0.039945126, y: 0.000017553568, z: 0.016542554}
+--- !u!65 &1281671209927746748
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4294504659501992515}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
@@ -155,3 +178,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DeliveryBox
   itemID: 03
   itemCount: 1
+--- !u!114 &5799046496621298975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4294504659501992515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07eadfb03a947524fa3175c3c2bb6c26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  type: 2
+  currentAmount: 100

@@ -1,89 +1,83 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // Added for New Input System
 
 public class PickupSystem : MonoBehaviour
 {
-    [Header("Pickup Settings")]
-    [SerializeField] private Transform holdPosition;
-    [SerializeField] private float pickupDistance = 3f;
-    [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private float throwForce = 10f;
-    [SerializeField] private LayerMask pickableLayer;
+    [Header("Hold Settings")]
+    public Transform holdPoint; // Player camera ke aage ka empty object jahan item hold hoga
+    public float pickupDistance = 3f;
 
-    private Rigidbody heldObject;
+    private GameObject heldItem = null;
 
-    private void Update()
+    void Update()
     {
-        // New Input System check for E key or Left Mouse Click
-        if (Keyboard.current.eKey.wasPressedThisFrame || Mouse.current.leftButton.wasPressedThisFrame)
+        // 'E' press karke item uthana ya drop karna
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            if (heldObject == null)
+            if (heldItem == null)
             {
-                TryPickUpObject();
+                TryPickupItem();
             }
             else
             {
-                DropObject();
+                DropItem();
             }
         }
-
-        // New Input System check for Right Mouse Click
-        if (Mouse.current.rightButton.wasPressedThisFrame && heldObject != null)
-        {
-            ThrowObject();
-        }
     }
 
-    private void FixedUpdate()
+    void TryPickupItem()
     {
-        if (heldObject != null)
-        {
-            MoveObject();
-        }
-    }
+        // Direct Main Camera se forward Raycast shoot karenge
+        if (Camera.main == null) return;
 
-    private void TryPickUpObject()
-    {
+        Transform camTrans = Camera.main.transform;
+        Ray centerRay = new Ray(camTrans.position, camTrans.forward);
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, pickupDistance, pickableLayer))
+
+        if (Physics.Raycast(centerRay, out hit, pickupDistance))
         {
-            if (hit.rigidbody != null)
+            // Yahan hum check kar rahe hain ki hit object ke paas Rigidbody ho ya koi valid pickable component ho
+            // Isse ingredient packet aur crafted matcha cup dono uth jayenge
+            if (hit.collider.GetComponent<Rigidbody>() != null && hit.collider.gameObject != gameObject)
             {
-                heldObject = hit.rigidbody;
-                heldObject.useGravity = false;
-                heldObject.linearDamping = 10; // Changed from linearDamping to drag
-                heldObject.constraints = RigidbodyConstraints.FreezeRotation;
+                heldItem = hit.collider.gameObject;
+
+                // Physics disable kar do taaki item haath mein steady rahe
+                Rigidbody rb = heldItem.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.isKinematic = true;
+                    rb.useGravity = false;
+                }
+
+                // Item ko holdPoint ka child bana kar center mein positioning karo
+                heldItem.transform.SetParent(holdPoint);
+                heldItem.transform.localPosition = Vector3.zero;
+                heldItem.transform.localRotation = Quaternion.identity;
+
+                Debug.Log("Item picked up successfully!");
             }
         }
     }
 
-    private void MoveObject()
+    public void DropItem()
     {
-        if (Vector3.Distance(heldObject.transform.position, holdPosition.position) > 0.1f)
+        if (heldItem != null)
         {
-            Vector3 moveDirection = (holdPosition.position - heldObject.transform.position);
-            heldObject.linearVelocity = moveDirection * moveSpeed; // Changed from linearVelocity to velocity
+            Rigidbody rb = heldItem.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+                rb.useGravity = true;
+            }
+
+            heldItem.transform.SetParent(null);
+            heldItem = null;
+            Debug.Log("Item dropped!");
         }
     }
 
-    private void DropObject()
+    public GameObject GetHeldItem()
     {
-        ResetHeldObject();
-    }
-
-    private void ThrowObject()
-    {
-        Rigidbody tempRigid = heldObject;
-        ResetHeldObject();
-        tempRigid.AddForce(transform.forward * throwForce, ForceMode.Impulse);
-    }
-
-    private void ResetHeldObject()
-    {
-        heldObject.useGravity = true;
-        heldObject.linearDamping = 1; // Changed from linearDamping to drag
-        heldObject.constraints = RigidbodyConstraints.None;
-        heldObject.linearVelocity = Vector3.zero; // Changed from linearVelocity to velocity
-        heldObject = null;
+        return heldItem;
     }
 }

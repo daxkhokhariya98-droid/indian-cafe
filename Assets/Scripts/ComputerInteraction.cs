@@ -16,6 +16,20 @@ public class ComputerInteraction : MonoBehaviour
 
     void Start()
     {
+        // Agar player transform assign nahi kiya, toh auto-find karne ki koshish karega
+        if (playerTransform == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                playerTransform = playerObj.transform;
+            }
+            else if (Camera.main != null)
+            {
+                playerTransform = Camera.main.transform;
+            }
+        }
+
         if (computerUI != null) computerUI.SetActive(false);
         if (interactPromptText != null) interactPromptText.gameObject.SetActive(false);
     }
@@ -49,6 +63,7 @@ public class ComputerInteraction : MonoBehaviour
 
         if (isInRange && Input.GetKeyDown(KeyCode.E))
         {
+            Debug.Log("[E] Pressed near computer!");
             ToggleComputer();
         }
     }
@@ -56,6 +71,7 @@ public class ComputerInteraction : MonoBehaviour
     public void ToggleComputer()
     {
         isUsingComputer = !isUsingComputer;
+        Debug.Log("ToggleComputer called! New State: " + isUsingComputer);
         ApplyState();
     }
 
@@ -63,6 +79,7 @@ public class ComputerInteraction : MonoBehaviour
     public void ClosePC()
     {
         isUsingComputer = false;
+        Debug.Log("ClosePC called!");
         ApplyState();
     }
 
@@ -71,6 +88,11 @@ public class ComputerInteraction : MonoBehaviour
         if (computerUI != null)
         {
             computerUI.SetActive(isUsingComputer);
+            Debug.Log("Computer UI Active state set to: " + isUsingComputer);
+        }
+        else
+        {
+            Debug.LogWarning("Computer UI Panel reference missing hai Inspector mein!");
         }
 
         if (isUsingComputer)

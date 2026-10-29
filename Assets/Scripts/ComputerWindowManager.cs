@@ -2,17 +2,24 @@ using UnityEngine;
 
 public class ComputerWindowManager : MonoBehaviour
 {
-    [Header("All Computer Windows")]
+    [Header("Windows")]
     public GameObject shopWindow;
     public GameObject upgradesWindow;
     public GameObject billsWindow;
     public GameObject musicWindow;
 
-    // Sabhi windows ko band karke sirf targeted window kholne ke liye
     public void OpenShopWindow()
     {
         CloseAllWindows();
-        if (shopWindow != null) shopWindow.SetActive(true);
+        if (shopWindow != null)
+        {
+            shopWindow.SetActive(true);
+            Debug.Log("Shop Window Opened Successfully!");
+        }
+        else
+        {
+            Debug.LogError("Shop Window reference missing hai Inspector mein!");
+        }
     }
 
     public void OpenUpgradesWindow()
