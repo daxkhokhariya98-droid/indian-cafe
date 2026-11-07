@@ -9,6 +9,9 @@ public class MainMenuManager : MonoBehaviour
     [Header("Settings Panel (Optional)")]
     [SerializeField] private GameObject settingsPanel;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip buttonClickSound;
+
     private void Start()
     {
         // Cursor hamesha menu me visible aur unlocked rahega
@@ -25,11 +28,13 @@ public class MainMenuManager : MonoBehaviour
 
     public void PlayGame()
     {
+        PlaySound();
         SceneManager.LoadScene(gameSceneName);
     }
 
     public void OpenSettings()
     {
+        PlaySound();
         if (settingsPanel != null && settingsPanel != this.gameObject)
         {
             settingsPanel.SetActive(true);
@@ -38,6 +43,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void CloseSettings()
     {
+        PlaySound();
         if (settingsPanel != null && settingsPanel != this.gameObject)
         {
             settingsPanel.SetActive(false);
@@ -46,7 +52,17 @@ public class MainMenuManager : MonoBehaviour
 
     public void QuitGame()
     {
+        PlaySound();
         Debug.Log("Game is quitting...");
         Application.Quit();
+    }
+
+    private void PlaySound()
+    {
+        if (buttonClickSound != null)
+        {
+            // PlayClipAtPoint ensures the sound plays even when the scene changes
+            AudioSource.PlayClipAtPoint(buttonClickSound, Camera.main.transform.position);
+        }
     }
 }
